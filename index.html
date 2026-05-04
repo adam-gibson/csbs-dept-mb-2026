@@ -526,10 +526,19 @@ const CE_END=new Date(2026,6,10);
 const TERM_END=new Date(2026,6,24);
 
 function getWeekLabel(mon){
-  // mon = Monday of the week
+  // Count only teaching weeks, skipping half term and CE week
   const termMon=new Date(TERM_START);termMon.setDate(TERM_START.getDate()-TERM_START.getDay()+1);
-  const diff=Math.round((mon-termMon)/(7*86400000));
-  return diff%2===0?'B':'A';
+  let teachingWeeks=0;
+  let w=new Date(termMon);
+  while(w<mon){
+    // Only count if this week is not entirely off
+    const fri=new Date(w);fri.setDate(w.getDate()+4);
+    const isHT=w>=HALF_TERM_START&&w<=HALF_TERM_END;
+    const isCE=w>=CE_START&&w<=CE_END;
+    if(!isHT&&!isCE)teachingWeeks++;
+    w.setDate(w.getDate()+7);
+  }
+  return teachingWeeks%2===0?'B':'A';
 }
 
 function isOffDay(d){
