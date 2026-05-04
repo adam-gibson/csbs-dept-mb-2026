@@ -550,13 +550,15 @@ function isOffDay(d){
 
 function renderCal(){
   const content=document.getElementById('content');
+  // Use date arithmetic that avoids DST issues
+  function addDays(base,n){const d=new Date(base);d.setDate(d.getDate()+n);return d;}
   const baseMon=new Date(2026,4,4);
-  const mon=new Date(baseMon.getTime()+calWeekOffset*14*86400000);
-  const mon2=new Date(mon.getTime()+7*86400000);
+  const mon=addDays(baseMon,calWeekOffset*14);
+  const mon2=addDays(mon,7);
   const days1=[],days2=[];
   for(let i=0;i<5;i++){
-    days1.push(new Date(mon.getTime()+i*86400000));
-    days2.push(new Date(mon2.getTime()+i*86400000));
+    days1.push(addDays(mon,i));
+    days2.push(addDays(mon2,i));
   }
   const wkA=getWeekLabel(mon);
   const wkB=wkA==='A'?'B':'A';
